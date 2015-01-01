@@ -1,17 +1,10 @@
 package main
 
 import "crypto/rand"
-import "encoding/json"
 import "flag"
 import "log"
 import "os"
-import "github.com/Alkorin/u2f-server-go/websafebase64"
-
-type Register struct {
-	Version   string `json:"version"`
-	AppId     string `json:"appId"`
-	Challenge string `json:"challenge"`
-}
+import "github.com/Alkorin/u2f-server-go/RegisterRequest"
 
 func main() {
 	// Parse args
@@ -29,11 +22,10 @@ func main() {
 	rand.Read(challenge)
 
 	// Generate structure and output json
-	json, _ := json.Marshal(Register{
-		Version:   "U2F_V2",
-		AppId:     appId,
-		Challenge: websafebase64.Encode(challenge),
-	})
+	r := RegisterRequest.New(
+		appId,
+		challenge,
+	)
 
-	os.Stdout.Write(json)
+	os.Stdout.Write(r.Generate())
 }
