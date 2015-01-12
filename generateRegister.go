@@ -1,9 +1,10 @@
 package main
 
 import "crypto/rand"
+import "encoding/hex"
 import "flag"
+import "fmt"
 import "log"
-import "os"
 import "github.com/Alkorin/u2f-server-go/RegisterRequest"
 
 func main() {
@@ -27,5 +28,6 @@ func main() {
 		challenge,
 	)
 
-	os.Stdout.Write(r.Generate())
+	fmt.Printf("Generated challenge: %s\n", hex.EncodeToString(challenge))
+	fmt.Printf("RegisterRequest: %s\n", r.Generate())
 }
