@@ -110,6 +110,7 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 		ClientDataJson: string(clientDataJson),
 		UserPublicKey:  userPublicKeyPem,
 		KeyHandle:      websafebase64.Encode(registrationData.KeyHandle),
+		Certificate:	registrationData.Certificate,
 	}, nil
 }
 
