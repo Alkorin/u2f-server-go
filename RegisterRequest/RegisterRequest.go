@@ -14,6 +14,11 @@ type RegisterRequest struct {
 	challenge []byte
 }
 
+type RegisterResponse struct {
+	RegistrationData string
+	ClientData       string
+}
+
 type RegisterResponseSuccess struct {
 	ClientDataJson string
 	KeyHandle      string
@@ -53,17 +58,7 @@ func (r *RegisterRequest) Generate() []byte {
 }
 
 // Validate a RegisterResponse against this RegisterRequest
-func (r *RegisterRequest) ValidateRegisterResponse(data []byte) (*RegisterResponseSuccess, error) {
-
-	// Parse JSON data
-	registerResponse := new(struct {
-		RegistrationData string `json:"registrationData"`
-		ClientData       string `json:"clientData"`
-	})
-	err := json.Unmarshal(data, &registerResponse)
-	if err != nil {
-		return nil, errors.New("Unable to parse JSON : " + err.Error())
-	}
+func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResponse) (*RegisterResponseSuccess, error) {
 
 	clientDataJson, err := websafebase64.Decode(registerResponse.ClientData)
 	if err != nil {

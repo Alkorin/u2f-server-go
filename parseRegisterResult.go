@@ -1,6 +1,7 @@
 package main
 
 import "encoding/hex"
+import "encoding/json"
 import "flag"
 import "fmt"
 import "github.com/Alkorin/u2f-server-go/RegisterRequest"
@@ -31,8 +32,15 @@ func main() {
 		log.Fatal("Error: empty stdin")
 	}
 
+	// Decode JSON input
+	var registerResponse RegisterRequest.RegisterResponse
+	err := json.Unmarshal(bytes, &registerResponse)
+	if err != nil {
+		log.Fatal("Unable to parse JSON : " + err.Error())
+	}
+
 	r := RegisterRequest.New(appId, challenge)
-	registerResonse, err := r.ValidateRegisterResponse(bytes)
+	registerResonse, err := r.ValidateRegisterResponse(registerResponse)
 	if err != nil {
 		fmt.Println("KO : " + err.Error())
 	} else {
