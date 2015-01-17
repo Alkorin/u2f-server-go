@@ -67,6 +67,7 @@ func enroll(w http.ResponseWriter, r *http.Request) {
 	registerRequest := RegisterRequest.New(params.ApplicationId, challenge)
 	response, err := registerRequest.ValidateRegisterResponse(params.RegisterResponse)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
