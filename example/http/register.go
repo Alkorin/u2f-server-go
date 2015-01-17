@@ -17,7 +17,7 @@ func main() {
 	flag.Parse()
 
 	// Handle queries
-	http.HandleFunc("/enroll", enroll)
+	http.HandleFunc("/", register)
 	if daemon {
 		// Listen HTTP
 		fmt.Println("Mode daemon")
@@ -28,7 +28,7 @@ func main() {
 	}
 }
 
-func enroll(w http.ResponseWriter, r *http.Request) {
+func register(w http.ResponseWriter, r *http.Request) {
 
 	// Load Body
 	body, err := ioutil.ReadAll(r.Body)
