@@ -143,7 +143,7 @@ func parseSignatureData(s string) (*SignatureData, error) {
 func checkSignature(data [32]byte, publicKeyPem string, signature []byte) (bool, error) {
 
 	// Parse publicKey
-	publicKey, err := ECDSAPublicKeyFromPem(publicKeyPem)
+	publicKey, err := ecdsaPublicKeyFromPem(publicKeyPem)
 	if err != nil {
 		return false, err
 	}
@@ -161,7 +161,7 @@ func checkSignature(data [32]byte, publicKeyPem string, signature []byte) (bool,
 	return ecdsa.Verify(publicKey, data[:], signatureData.R, signatureData.S), nil
 }
 
-func ECDSAPublicKeyFromPem(PEMString string) (*ecdsa.PublicKey, error) {
+func ecdsaPublicKeyFromPem(PEMString string) (*ecdsa.PublicKey, error) {
 
 	// Decode PEM
 	publicKeyPem, _ := pem.Decode([]byte(PEMString))
