@@ -31,7 +31,7 @@ func main() {
 	r := SignRequest.New(
 		appId,
 		keyHandle,
-		"",	// Optionnal here
+		"", // Optionnal here
 		challenge,
 	)
 
