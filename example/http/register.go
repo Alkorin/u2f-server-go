@@ -75,7 +75,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		ClientData string `json:"clientData"`
 		KeyHandle  string `json:"keyHandle"`
 		PublicKey  string `json:"publicKey"`
-	}{response.ClientDataJson, response.KeyHandle, response.UserPublicKey})
+	}{response.ClientDataJSON, response.KeyHandle, response.UserPublicKey})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

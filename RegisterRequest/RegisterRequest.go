@@ -10,7 +10,7 @@ import "errors"
 import "github.com/Alkorin/u2f-server-go/websafebase64"
 
 type RegisterRequest struct {
-	appId     string
+	appID     string
 	challenge []byte
 }
 
@@ -20,7 +20,7 @@ type RegisterResponse struct {
 }
 
 type RegisterResponseSuccess struct {
-	ClientDataJson string
+	ClientDataJSON string
 	KeyHandle      string
 	UserPublicKey  string
 	Certificate    *x509.Certificate
@@ -33,10 +33,10 @@ type RegistrationData struct {
 	Signature     []byte
 }
 
-func New(appId string, challenge []byte) RegisterRequest {
+func New(appID string, challenge []byte) RegisterRequest {
 
 	r := RegisterRequest{
-		appId:     appId,
+		appID:     appID,
 		challenge: challenge,
 	}
 	return r
@@ -47,11 +47,11 @@ func (r *RegisterRequest) Generate() []byte {
 
 	json, _ := json.Marshal(struct {
 		Version   string `json:"version"`
-		AppId     string `json:"appId"`
+		appID     string `json:"appId"`
 		Challenge string `json:"challenge"`
 	}{
 		"U2F_V2",
-		r.appId,
+		r.appID,
 		websafebase64.Encode(r.challenge),
 	})
 	return json
@@ -60,7 +60,7 @@ func (r *RegisterRequest) Generate() []byte {
 // Validate a RegisterResponse against this RegisterRequest
 func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResponse) (*RegisterResponseSuccess, error) {
 
-	clientDataJson, err := websafebase64.Decode(registerResponse.ClientData)
+	clientDataJSON, err := websafebase64.Decode(registerResponse.ClientData)
 	if err != nil {
 		return nil, errors.New("unable to decode ClientData: " + err.Error())
 	}
@@ -69,9 +69,9 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 	clientData := new(struct {
 		Challenge string `json:"challenge"`
 	})
-	err = json.Unmarshal(clientDataJson, clientData)
+	err = json.Unmarshal(clientDataJSON, clientData)
 	if err != nil {
-		return nil, errors.New("unable to decode ClientDataJson: " + err.Error())
+		return nil, errors.New("unable to decode ClientDataJSON: " + err.Error())
 	}
 	if clientData.Challenge != websafebase64.Encode(r.challenge) {
 		return nil, errors.New("invalid Challenge")
@@ -84,10 +84,10 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 	}
 
 	// Verify Signature
-	appId256 := sha256.Sum256([]byte(r.appId))
-	clientData256 := sha256.Sum256(clientDataJson)
+	appID256 := sha256.Sum256([]byte(r.appID))
+	clientData256 := sha256.Sum256(clientDataJSON)
 	dataToSign := []byte{0}
-	dataToSign = append(dataToSign, appId256[:]...)
+	dataToSign = append(dataToSign, appID256[:]...)
 	dataToSign = append(dataToSign, clientData256[:]...)
 	dataToSign = append(dataToSign, registrationData.KeyHandle...)
 	dataToSign = append(dataToSign, registrationData.UserPublicKey...)
@@ -107,7 +107,7 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 	}
 
 	return &RegisterResponseSuccess{
-		ClientDataJson: string(clientDataJson),
+		ClientDataJSON: string(clientDataJSON),
 		UserPublicKey:  userPublicKeyPem,
 		KeyHandle:      websafebase64.Encode(registrationData.KeyHandle),
 		Certificate:	registrationData.Certificate,
@@ -202,7 +202,7 @@ func getDERLength(data []byte) (uint, error) {
 		return uint(data[2]) + 3, nil
 	} else if firstLengthByte == 0x82 {
 		return uint(binary.BigEndian.Uint16(data[2:4])) + 4, nil
-	} else {
-		return 0, errors.New("invalid DER length")
 	}
+	
+	return 0, errors.New("invalid DER length")
 }
