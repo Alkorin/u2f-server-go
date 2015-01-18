@@ -62,7 +62,7 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 
 	clientDataJson, err := websafebase64.Decode(registerResponse.ClientData)
 	if err != nil {
-		return nil, errors.New("Unable to decode ClientData : " + err.Error())
+		return nil, errors.New("unable to decode ClientData: " + err.Error())
 	}
 
 	// Verify Challenge
@@ -71,16 +71,16 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 	})
 	err = json.Unmarshal(clientDataJson, clientData)
 	if err != nil {
-		return nil, errors.New("Unable to decode ClientDataJson : " + err.Error())
+		return nil, errors.New("unable to decode ClientDataJson: " + err.Error())
 	}
 	if clientData.Challenge != websafebase64.Encode(r.challenge) {
-		return nil, errors.New("Invalid Challenge")
+		return nil, errors.New("invalid Challenge")
 	}
 
 	// Extract registration fields
 	registrationData, err := parseRegistrationData(registerResponse.RegistrationData)
 	if err != nil {
-		return nil, errors.New("Unable to decode registrationData : " + err.Error())
+		return nil, errors.New("unable to decode registrationData: " + err.Error())
 	}
 
 	// Verify Signature
@@ -97,7 +97,7 @@ func (r *RegisterRequest) ValidateRegisterResponse(registerResponse RegisterResp
 		dataToSign,
 		registrationData.Signature)
 	if err != nil {
-		return nil, errors.New("Invalid signature")
+		return nil, errors.New("invalid signature")
 	}
 
 	// Compute PEM key
@@ -125,7 +125,7 @@ func parseRegistrationData(s string) (*RegistrationData, error) {
 	// A reserved byte [1 byte], which for legacy reasons has the value 0x05.
 	reservedByte, data := data[0], data[1:]
 	if reservedByte != '\x05' {
-		return nil, errors.New("Invalid reservedByte")
+		return nil, errors.New("invalid reservedByte")
 	}
 
 	// A user public key [65 bytes]. This is the (uncompressed) x,y-representation of a curve point on the P-256 NIST elliptic curve.
@@ -193,7 +193,7 @@ func getDERLength(data []byte) (uint, error) {
 
 	firstByte := data[0]
 	if firstByte != '\x30' {
-		return 0, errors.New("Invalid DER certificate")
+		return 0, errors.New("invalid DER certificate")
 	}
 
 	if firstLengthByte := data[1]; firstLengthByte < 0x81 {
@@ -203,6 +203,6 @@ func getDERLength(data []byte) (uint, error) {
 	} else if firstLengthByte == 0x82 {
 		return uint(binary.BigEndian.Uint16(data[2:4])) + 4, nil
 	} else {
-		return 0, errors.New("Invalid DER length")
+		return 0, errors.New("invalid DER length")
 	}
 }

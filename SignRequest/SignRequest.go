@@ -68,7 +68,7 @@ func (s *SignRequest) ValidateSignResponse(signResponse SignResponse) (*SignSucc
 
 	clientDataJson, err := websafebase64.Decode(signResponse.ClientData)
 	if err != nil {
-		return nil, errors.New("Unable to decode ClientData : " + err.Error())
+		return nil, errors.New("unable to decode ClientData: " + err.Error())
 	}
 
 	// Verify Challenge
@@ -77,16 +77,16 @@ func (s *SignRequest) ValidateSignResponse(signResponse SignResponse) (*SignSucc
 	})
 	err = json.Unmarshal(clientDataJson, clientData)
 	if err != nil {
-		return nil, errors.New("Unable to decode ClientDataJson : " + err.Error())
+		return nil, errors.New("unable to decode ClientDataJson: " + err.Error())
 	}
 	if clientData.Challenge != websafebase64.Encode(s.challenge) {
-		return nil, errors.New("Invalid Challenge")
+		return nil, errors.New("invalid Challenge")
 	}
 
 	// Extract registration fields
 	signatureData, err := parseSignatureData(signResponse.SignatureData)
 	if err != nil {
-		return nil, errors.New("Unable to decode signatureData : " + err.Error())
+		return nil, errors.New("unable to decode signatureData: " + err.Error())
 	}
 
 	// Verify signature
@@ -100,10 +100,10 @@ func (s *SignRequest) ValidateSignResponse(signResponse SignResponse) (*SignSucc
 
 	result, err := checkSignature(sha256.Sum256(dataToSign), s.publicKey, signatureData.signature)
 	if err != nil {
-		return nil, errors.New("Unable to parse signature : " + err.Error())
+		return nil, errors.New("unable to parse signature: " + err.Error())
 	}
 	if result == false {
-		return nil, errors.New("Invalid signature")
+		return nil, errors.New("invalid signature")
 	}
 
 	return &SignSuccess{
@@ -124,7 +124,7 @@ func parseSignatureData(s string) (*SignatureData, error) {
 	// A user presence byte [1 byte]. Bit 0 is set to 1, which means that user presence was verified
 	userPresence, data := data[0], data[1:]
 	if userPresence != '\x01' {
-		return nil, errors.New("Invalid user presence")
+		return nil, errors.New("invalid user presence")
 	}
 
 	// A counter [4 bytes]. This is the big-endian representation of a counter value that the U2F token increments every time it performs an authentication operation.
@@ -166,7 +166,7 @@ func ECDSAPublicKeyFromPem(PEMString string) (*ecdsa.PublicKey, error) {
 	// Decode PEM
 	publicKeyPem, _ := pem.Decode([]byte(PEMString))
 	if publicKeyPem == nil || publicKeyPem.Type != "PUBLIC KEY" {
-		return nil, errors.New("Invalid publicKey")
+		return nil, errors.New("invalid publicKey")
 	}
 
 	// Decode ASN.1 data
@@ -185,7 +185,7 @@ func ECDSAPublicKeyFromPem(PEMString string) (*ecdsa.PublicKey, error) {
 	// Decode Point
 	x, y := elliptic.Unmarshal(elliptic.P256(), publicKey.BitString.RightAlign())
 	if x == nil {
-		return nil, errors.New("Failed to unmarshal elliptic curve point")
+		return nil, errors.New("failed to unmarshal elliptic curve point")
 	}
 
 	// Return public key
