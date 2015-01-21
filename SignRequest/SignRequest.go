@@ -24,7 +24,7 @@ type SignResponse struct {
 }
 
 type SignSuccess struct {
-	clientDataJSON string
+	ClientDataJSON string
 	Counter        uint32
 	UserPresence   byte
 }
@@ -108,7 +108,7 @@ func (s *SignRequest) ValidateSignResponse(signResponse SignResponse) (*SignSucc
 
 	return &SignSuccess{
 		Counter:        binary.BigEndian.Uint32(signatureData.counter),
-		clientDataJSON: string(clientDataJSON),
+		ClientDataJSON: string(clientDataJSON),
 		UserPresence:   signatureData.userPresence,
 	}, nil
 }
